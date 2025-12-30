@@ -1,0 +1,259 @@
+(defvirtualkeys
+  fasttypingstate XX
+  ;; PRE1.10 fasttypingtoggle (on-press toggle-virtualkey fasttypingstate)
+)
+
+;; 2. THE CORE 'TYPE' TEMPLATE
+;; This template wraps a keypress/action. When a key is pressed, it first attempts
+;; to hold the fasttypingstate for 55ms, signaling that fast typing is occurring.
+(deftemplate type (action)
+  (multi
+    (fork
+       (hold-for-duration 55 fasttypingstate)
+      XX
+      (lctl rctl lalt ralt lmet rmet)
+    )
+    $action
+  )
+)
+
+;; 3. THE HOME ROW MOD TEMPLATE (Optional, but good for consistency)
+;; This combines the tap-hold logic with the new 'type' template.
+(deftemplate homerowmod (timeouttap timeouthold keytap keyhold)
+  (switch
+    ((input virtual fasttypingstate)) (t! type $keytap) break
+    
+    () (tap-hold $timeouttap $timeouthold
+         (t! type $keytap)
+         $keyhold
+       ) break
+  )
+)
+
+(defsrc
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     grv     1       2       3       4       5       6       7       8       9       0       -       =            bspc
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     tab         q       w       e       r       t       y       u       i       o       p       [       ]       \
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     caps          a       s       d       f       g       h       j       k       l       ;       '               ret
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     lsft              z       x       c       v       b       n       m       ,       .       /                  rsft
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     lctl              lmet    lalt                    spc                     ralt    rctl
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(deflayer graphite_split
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     XX      tab     @B      @L      @D      @C      @V      XX      @J      @F      @O      @U      ,             del 
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     esc         @N      @R      @T      @S      @G      XX      XX      @Y      @H      @A       @E     @I       @off
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     @Ms           @X      @_Q     @_M     @W      @Z      XX      XX      @K      @_P     @_Ap    @_Sc    .   
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     XX                XX      XX      S--     spc     tab     XX      rpt     bspc    .       XX                   XX
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     XX                _       XX                      ret                     XX      XX
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+
+(deflayer symbol
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     XX      _       `       S-,     S-.     -       S-\     XX      XX      S-[     S-]     S-4     S-6             _
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     _           S-1     S-8     /       =       S-7     XX      XX      S-3     S-9     S-0     ;       S-'         _
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     _             S-`     S-=     [       ]       S-5     XX      XX      S-2     S-;     ,       .       '
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     XX                XX      XX      _       _       _      XX      _       _       _       XX                   XX
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     XX                _       XX                      _                       XX      XX
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(deflayer number
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     XX      _       /       9       8       7       S-8     XX      XX      XX      XX      XX      XX              _
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     _           0       3       2       1       S-=     XX      XX      XX      XX       XX      rctl   ralt        _
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     _             -      6       5       4       S-5     XX      XX      XX      XX      XX      XX                XX
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     XX                XX      XX      _       _       _       XX      _       _       _       XX                   XX
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     XX                _       XX                      _                       XX      XX
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(deflayer navigation
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     XX      _       XX      XX      XX      XX      XX       XX     XX      home    up      end     XX              _
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     _           lalt    lctl    lsft    XX      XX     XX       XX      pgup    left    down    rght    XX          _
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     _             XX      lmet    XX      XX      XX       XX      XX     pgdn    XX      XX      XX               XX
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     XX                XX      XX      _       _       _      XX       _       _       _       XX                   XX
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     XX                _       XX                      _                       XX      XX
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(deflayer mouse
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     XX      _       XX      XX      XX      XX      XX       XX     XX      @mwl    @ms↑    @mwr    XX              _
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     _           XX      XX      XX      XX      XX     XX       XX      @mwu    @ms←    @ms↓    @ms→    mrgt        _
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     _             XX      XX      XX      XX      XX       XX      XX     @mwd    XX      XX      XX              @sm
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     XX                XX      XX      _       _       _       XX      _       mlft    _       XX                   XX
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     XX                _       XX                      _                       XX      XX
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(deflayer passthrough
+;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
+     _       _       _       _       _       _       _       _       _       _       _       _       _               _
+;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
+;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
+     _           _       _       _       _       _       _       _       _       _       _       _       _         @on
+;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
+     _             _       _       _       _       _       _       _       _       _       _       _                 _
+;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
+;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
+     _                 _       _       _       _       _       _       _       _       _       _                     _
+;; ║                 ║               ║       ║       ║       ║       ║       ║       ║       ║       ║                 ║
+;; ╠═════════════════╬═══════╬═══════╬═══════╩═══════╩═══════╩═══════╩═══════╬═══════╬═══════╬═══════╩═════════════════╝
+     _                 _       _                       _                       _       _
+;; ║                 ║       ║       ║                                       ║       ║       ║
+;; ╚═════════════════╩═══════╩═══════╩═══════════════════════════════════════╩═══════╩═══════╝
+)
+
+(defalias
+  N (t! homerowmod 200 250 n lalt)
+  I (t! homerowmod 200 250 i ralt)
+
+  R (t! homerowmod 200 180 r (layer-toggle symbol))
+  E (t! homerowmod 200 180 e (layer-toggle symbol))
+
+  T (t! homerowmod 200 160 t lsft)
+  A (t! homerowmod 200 160 a rsft)
+
+  S (t! homerowmod 200 160 s (layer-toggle navigation))
+  H (t! homerowmod 200 160 h (layer-toggle number))
+
+  Q (t! homerowmod 200 220 q lmet)
+  Sc (t! homerowmod 200 220 ; rmet)
+
+  W (t! homerowmod 200 220 w lctl)
+  P (t! homerowmod 200 220 p rctl)
+
+  B (t! type b) L (t! type l)  D (t! type d) C (t! type c) V (t! type v) J (t! type j) F (t! type f) O (t! type o) U (t! type u)
+  G (t! type g) Y (t! type y)
+  X (t! type x) M (t! type m) Z (t! type z) K (t! type k)
+
+  Ms (layer-toggle mouse)
+)
+
+(defchords Right 40
+  (l          ) @P
+  (     ;     ) '
+  (          ') @Sc
+  (l    ;     ) '
+  (     ;    ') ;
+)
+
+(defalias 
+  _P (chord Right l)
+  _Ap (chord Right ;)
+  _Sc (chord Right ')
+)
+
+(defchords Left 40
+  (s     ) @Q
+  (     d) @M
+  (s    d) \
+)
+
+(defalias 
+  _Q (chord Left s)
+  _M (chord Left d)
+)
+
+(defalias
+  ;; Mouse wheel actions. The first number is the interval in milliseconds
+  ;; between scroll actions. The second number is the distance in some arbitrary
+  ;; unit. Play with the parameters to see what feels correct. Both numbers
+  ;; must be in the range 1-65535
+  
+  mwu (mwheel-up 50 120)
+  mwd (mwheel-down 50 120)
+
+  ;; Horizontal mouse wheel actions. Similar story to vertical mouse wheel.
+  mwl (mwheel-left 50 120)
+  mwr (mwheel-right 50 120)
+
+  ;; Mouse movement actions.The first number is the interval in milliseconds
+  ;; between mouse actions. The second number is the distance traveled per interval
+  ;; in pixels.
+
+  ms↑ (movemouse-up 1 1)
+  ms← (movemouse-left 1 1)
+  ms↓ (movemouse-down 1 1)
+  ms→ (movemouse-right 1 1)
+
+  ;; Mouse movement actions with linear acceleration. The first number is the
+  ;; interval in milliseconds between mouse actions. The second number is the time
+  ;; in milliseconds for the distance to linearly ramp up from the minimum distance
+  ;; to the maximum distance. The third number is the minimum distance traveled
+  ;; per interval in pixels. The fourth number is the maximum distance traveled
+  ;; per interval in pixels.
+
+  ma↑ (movemouse-accel-up 1 1000 1 5)
+  ma← (movemouse-accel-left 1 1000 1 5)
+  ma↓ (movemouse-accel-down 1 1000 1 5)
+  ma→ (movemouse-accel-right 1 1000 1 5)
+
+  ;; setmouse places the cursor at a specific pixel x-y position.
+  sm (setmouse 960 540)
+)
+
+(defalias
+  off (tap-hold 200 500 / (layer-switch passthrough))
+  on (tap-hold 200 300 \ (layer-switch graphite_split))
+)

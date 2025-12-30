@@ -1,0 +1,60 @@
+(defsrc
+  grv   1     2     3     4     5     6     7     8     9     0     -     =     bspc
+  tab   q     w     e     r     t     y     u     i     o     p     [     ]     \
+  caps  a     s     d     f     g     h     j     k     l     ;     '     ret
+  lsft  z     x     c     v     b     n     m     ,     .     /     rsft
+  lctl  lmet  lalt              spc               ralt  rctl
+)
+
+(deflayer Colemak-dh
+  grv   1     2     3     4     5     6     7     8     9     0     -     =     bspc     
+  tab   q     w     f     p     b     j     l     u     y     ;     [     ]     @switch-on
+  @eNav @aM   @rA   @sS   @tC   g     m     @nC   @eS   @iA   @oM   '     ret
+  lsft  x     c     d     v     z     k     h     ,     .     /     rsft
+  lctl  lmet  lalt              @spc-sym          ralt  rctl
+)
+
+(deflayer Sym
+  _     _     _     _     _     _     _     _     _     _     _     _     _     _    
+  _     _     _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _     _     _     _     _     bspc     _     _     _     _
+  _     _     _                 _                 _     _  
+)
+
+(deflayer Nav 
+  _     _     _     _     _     _     _     _     _     _     _     _     _     _    
+  _     _     _     _     _     _     pgup  home  up    end   _     _     _     _
+  _     _     _     _     _     _     pgdn  left  down  rght  _     _     _
+  _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _                 _                 _     _
+)
+
+(defalias
+  spc-sym (tap-hold 200 200 spc (layer-toggle Sym))
+  eNav (tap-hold 200 200 esc (layer-toggle Nav))
+)
+
+(deflayer Passthrough
+  _     _     _     _     _     _     _     _     _     _     _     _     _    _    
+  _     _     _     _     _     _     _     _     _     _     _     _     _    @switch-off
+  _     _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _     _     _     _     _     _     _     _     _     _
+  _     _     _                 _                 _     _
+)
+
+(defalias
+  switch-on (tap-hold 300 300 \ (layer-switch Passthrough))
+  switch-off (tap-hold 300 300 \ (layer-switch Colemak-dh))
+)
+
+(defalias
+  aM (tap-hold 250 250 a lmet)
+  oM (tap-hold 200 200 o rmet)
+  rA (tap-hold 200 200 r lalt)
+  iA (tap-hold 200 200 i ralt)
+  sS (tap-hold 200 200 s lsft)
+  eS (tap-hold 200 200 e rsft)
+  tC (tap-hold 200 200 t lctl)
+  nC (tap-hold 250 250 n rctl)
+)
