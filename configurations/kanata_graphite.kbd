@@ -22,7 +22,6 @@
 (deftemplate homerowmod (timeouttap timeouthold keytap keyhold)
   (switch
     ((input virtual fasttypingstate)) (t! type $keytap) break
-    
     () (tap-hold $timeouttap $timeouthold
          (t! type $keytap)
          $keyhold
@@ -51,13 +50,13 @@
 
 (deflayer graphite_split
 ;; ╔═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════╦═══════════╗
-     XX      tab     @B      @L      @D      @C      @V      XX      @J      @F      @O      @U      ,             del 
+     XX      tab     @B      @L      @D      @W      @Z      XX      '       @F      @O      @U      @J            del 
 ;; ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║           ║ 
 ;; ╠═══════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══════╣
      esc         @N      @R      @T      @S      @G      XX      XX      @Y      @H      @A       @E     @I       @off
 ;; ║           ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
 ;; ╠═══════════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═╦═════╩═══════╣
-     @Ms           @X      @_Q     @_M     @W      @Z      XX      XX      @K      @_P     @_Ap    @_Sc    .   
+     @Ms           @Q      @_X     @_M     @C      @V      XX      XX      @K      @_P     @_Cma   @_Dot   /
 ;; ║             ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║       ║
 ;; ╠═════════════╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═══╦═══╩═════════════╣
      XX                XX      XX      S--     spc     tab     XX      rpt     bspc    .       XX                   XX
@@ -177,41 +176,41 @@
   S (t! homerowmod 200 160 s (layer-toggle navigation))
   H (t! homerowmod 200 160 h (layer-toggle number))
 
-  Q (t! homerowmod 200 220 q lmet)
-  Sc (t! homerowmod 200 220 ; rmet)
+  X (t! homerowmod 200 220 x lmet)
+  Dot (t! homerowmod 200 220 . rmet)
 
-  W (t! homerowmod 200 220 w lctl)
+  C (t! homerowmod 200 220 c lctl)
   P (t! homerowmod 200 220 p rctl)
 
-  B (t! type b) L (t! type l)  D (t! type d) C (t! type c) V (t! type v) J (t! type j) F (t! type f) O (t! type o) U (t! type u)
+  B (t! type b) L (t! type l)  D (t! type d) W (t! type w) Z (t! type z) F (t! type f) O (t! type o) U (t! type u) J (t! type j)
   G (t! type g) Y (t! type y)
-  X (t! type x) M (t! type m) Z (t! type z) K (t! type k)
+  Q (t! type q) M (t! type m) V (t! type v) K (t! type k)
 
   Ms (layer-toggle mouse)
 )
 
 (defchords Right 40
   (l          ) @P
-  (     ;     ) '
-  (          ') @Sc
+  (     ;     ) ,
+  (          ') @Dot
   (l    ;     ) '
   (     ;    ') ;
 )
 
 (defalias 
   _P (chord Right l)
-  _Ap (chord Right ;)
-  _Sc (chord Right ')
+  _Cma (chord Right ;)
+  _Dot (chord Right ')
 )
 
 (defchords Left 40
-  (s     ) @Q
+  (s     ) @X
   (     d) @M
   (s    d) \
 )
 
 (defalias 
-  _Q (chord Left s)
+  _X (chord Left s)
   _M (chord Left d)
 )
 
@@ -254,6 +253,6 @@
 )
 
 (defalias
-  off (tap-hold 200 500 / (layer-switch passthrough))
+  off (tap-hold 300 300 XX (layer-switch passthrough))
   on (tap-hold 200 300 \ (layer-switch graphite_split))
 )
